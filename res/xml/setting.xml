@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="基本设置" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="silence"
+            android:summaryOff="关闭"
+            android:summaryOn="开启"
+            android:title="静音" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="shownum"
+            android:summaryOff="隐藏"
+            android:summaryOn="显示"
+            android:title="显示手数" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="update4wifi"
+            android:summaryOff="关闭"
+            android:summaryOn="开启"
+            android:title="仅WiFi下更新题库" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="其他" >
+        <Preference
+            android:key="feedback"
+            android:summary="用户意见反馈"
+            android:title="意见反馈" />
+        <Preference
+            android:key="update"
+            android:summary="检测是否有新版本"
+            android:title="新版本检测" />
+        <Preference
+            android:key="about"
+            android:summary="关于我们、版权信息"
+            android:title="关于我们" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

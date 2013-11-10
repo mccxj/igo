@@ -6,11 +6,38 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    tools:context=".activity.MainActivity" >
 
-    <TextView
+    <Button
+        android:id="@+id/button_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/button_test" />
+
+    <Button
+        android:id="@+id/button_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_test"
+        android:layout_alignLeft="@+id/button_test"
+        android:text="@string/button_start" />
+
+    <Button
+        android:id="@+id/button_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/button_test"
+        android:layout_below="@+id/button_test"
+        android:text="@string/button_setting" />
+
+    <Button
+        android:id="@+id/button_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button_setting"
+        android:layout_below="@+id/button_setting"
+        android:text="@string/button_about" />
 
 </RelativeLayout>

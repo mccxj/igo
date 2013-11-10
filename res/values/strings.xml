@@ -4,5 +4,9 @@
     <string name="app_name">igo</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="button_setting">设置</string>
+    <string name="button_test">测验</string>
+    <string name="button_about">关于</string>
+    <string name="button_start">开始</string>
 
 </resources>
