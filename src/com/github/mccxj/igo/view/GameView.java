@@ -1,13 +1,12 @@
 package com.github.mccxj.igo.view;
 
-import static com.github.mccxj.go.GameConstants.BLACK;
-import static com.github.mccxj.go.GameConstants.SIZE;
-import static com.github.mccxj.go.GameConstants.WHITE;
+import static com.github.mccxj.go.GameConstants.*;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.github.mccxj.go.GoGame;
@@ -80,5 +79,29 @@ public class GameView extends View {
         goGame.setSGF(game);
         goGame.reset();
         this.postInvalidate();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (MotionEvent.ACTION_UP == event.getAction()) {
+            int posX = (int) Math.round((event.getX() - iX) / s);
+            int posY = (int) Math.round((event.getY() - iY) / s);
+            int result = goGame.next(posX, posY);
+            if (result != INVALID) {
+                if (goGame.addStone(posX, posY)) {
+                    if (result == SUCC)
+                        System.out.println("SUCC");
+                    else if (result == FAIL)
+                        System.out.println("FAIL");
+                    else {
+                        if (result >= 1000)
+                            result -= 1000;
+                        goGame.addStone(result / SIZE, result % SIZE);
+                    }
+                    postInvalidate();
+                }
+            }
+        }
+        return true;
     }
 }

@@ -5,9 +5,6 @@ Go (Chinese: 圍棋 wéiqí, Japanese: 囲碁 igo,[nb 2] Korean: 바둑 baduk, V
 
 TODO
 
-* 迁移SGF格式解析逻辑
-* 增加测试SGF文件到Assets中进行测试
-* 增加手机上的点击落子功能
 * 优化做题流程判断
 * 增加手数显示
 * 增加坐标显示
@@ -21,6 +18,9 @@ TODO
 
 DONE
 
+* 增加手机上的点击落子功能
+* 迁移SGF格式解析逻辑
+* 增加测试SGF文件到Assets中进行测试
 * 基本的棋盘展示
 * 基本的落子逻辑
 
