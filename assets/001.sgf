@@ -1,0 +1,25 @@
+(;AB[pd][qd][qe][oe][of][rf][qg][pi][pj][ni][mh][me][mc][lc]AW[ne][od][pe][pf][qf][og][ng][qj]SZ[19]C[第9题：白先
+　　　　　　　　基本图
+【审题】白棋身处险境，危在旦夕。眼下，
+只有设法利用黑棋的弱点冲出重围。按《发
+阳论》的解题规则，无论棋形多么难看，变
+化多么勉强，被攻击的一方只要能冲出包围
+圈就是胜利！
+〖提示〗白棋提两子是先手。]
+
+(;W[nf];B[lf];W[re];B[rg];W[oc];B[pb]LB[pc:a][qc:b][qb:c][nb:d][nd:e]C[图一：白1提、3断好次序。白5立沉着，如改在a位扳，以下黑b、白6、黑c、白d、黑e净杀白棋；又上述变化中白6立如改在c位扳，则黑5、白6、黑e，白棋也失败。])
+(;W[nf];B[lf];W[re];B[rg];W[oc];B[qc];W[qb];B[rb];W[pc]LB[pb:a][nb:b][rc:c][pa:d]C[图二：前图黑6如改在本图6位曲，则白7、9巧手！以后黑如在a位打则还原成下图变化。黑如不打而在c位粘，则白d倒虎可成活。又本图黑6如改在7位跳，则白a、黑6、白b，白棋也可做成两眼。]
+)
+(;W[nf];B[lf];W[re];B[rg];W[oc];B[pb];W[pc];B[qc];W[qb];B[rb];W[qa];B[ra];W[rc]
+;B[pa];W[qb];B[qa];W[rd];B[qb];W[ob];B[se];W[mb];B[ma];W[lb];B[kb];W[na];B[nc]
+;W[nb];B[la];W[jb];B[kc];W[ka]C[图三：图一之后，白7、9是唯一治孤手段。白7如在19位挡，黑9位双简单杀白。白11立是常用弃子手法。白21托时，黑22是最强烈的抵抗！以下变化至白31，原正解图就此告终。])
+(;W[nf];B[lf];W[re];B[rg];W[oc];B[pb];W[pc];B[qc];W[qb];B[rb];W[qa];B[ra];W[rc]
+;B[pa];W[qb];B[qa];W[rd];B[qb];W[ob];B[se];W[mb];B[ma];W[lb];B[kb];W[na];B[nc]
+;W[nb];B[la];W[jb];B[kc];W[ka];B[la];W[ma];B[ic];W[hb];B[ib];W[ia];B[jc];W[ja]
+;B[gc];W[hc];B[hd];W[gb];B[fc];W[eb];B[fb];W[fa];B[ec];W[db]LB[gd:a]C[图四：原正解图中白棋这样就算逃出去，实在勉强！接下来黑棋继续攻击，白棋依然危险万分。不过，黑棋真要想吃白棋却也不易。本图仅仅是许多变化之一。黑42改走a位硬杀白棋的条件似乎不足。])
+(;W[nf];B[lf];W[re];B[rd];W[rg];B[se];W[qh];B[qi];W[ri];B[ph];W[pg];B[rj];W[sj]
+;B[qk];W[sg]C[图五：白3断时，黑如改在4位打，则白利用右边原有的一枚白子做活。
+
+
+结论：白先逃出活。图三是正解。
+思考与收获：除图四显示的变化之外，黑棋还存有种种猛攻的可能。本题不能算作是成功的作品！]))

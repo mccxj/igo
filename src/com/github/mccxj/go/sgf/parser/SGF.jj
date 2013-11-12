@@ -1,0 +1,143 @@
+options {
+  LOOKAHEAD = 1;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER =false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = true;
+  IGNORE_CASE = true;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(SGF)
+package com.github.mccxj.go.sgf.parser;
+import java.util.*;
+import com.github.mccxj.go.sgf.*;
+public class SGF {
+}
+PARSER_END(SGF)
+
+SKIP :
+{
+  " "
+  |"\t"
+  |"\n"
+  |"\r"
+}
+
+
+TOKEN :
+{
+  <SEMI: ";">
+  |<OPEN: "(">
+  |<CLOSE: ")">
+  |<NAME: (["A"-"Z"])+>
+  |<VALUE: "[" ((("\\"[" "-"~"])|~["]","\\"])*) "]">
+}
+
+List<SGFGameTree> Collection() :
+{
+  SGFGameTree gameTree = null;
+  List<SGFGameTree> gameTrees = new ArrayList<SGFGameTree>(); 
+}
+{
+  (
+    gameTree = GameTree()
+    {
+      gameTrees.add(gameTree);
+    }
+  )+
+  {
+    return gameTrees;
+  }
+}
+
+SGFGameTree GameTree() :
+{
+  SGFSequence sequence = null;
+  SGFGameTree child = null;
+  SGFGameTree gameTree = new SGFGameTree();
+}
+{
+  <OPEN>
+  sequence = Sequence()
+  {
+    gameTree.setSequence(sequence);
+  }
+  (
+    child = GameTree()
+    {
+      gameTree.addGameTree(child);
+    }
+  )*
+  <CLOSE>
+  {
+    return gameTree;
+  }
+}
+
+SGFSequence Sequence() :
+{
+  SGFNode node = null;
+  SGFSequence sequence = new SGFSequence();
+}
+{
+  (
+    node = Node()
+    {
+      sequence.addNode(node);
+    }
+  )+
+  {
+    return sequence;
+  }
+}
+
+SGFNode Node() :
+{
+  SGFProperty property = null;
+  SGFNode node = new SGFNode();
+}
+{
+  <SEMI>
+  (
+    property = Property()
+    {
+      node.addProperty(property);
+    }
+  )*
+  {
+    return node;
+  }
+}
+
+SGFProperty Property() :
+{
+  Token name = null;
+  Token value = null;
+  SGFProperty property = new SGFProperty();
+}
+{
+  name = <NAME>
+  {
+    property.setIdentifier(name.image);
+  }
+  (
+    value = <VALUE>
+    {
+      property.addValue(value.image);
+    }
+  )+
+  {
+    return property;
+  }
+}

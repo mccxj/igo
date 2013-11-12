@@ -1,0 +1,22 @@
+(;AW[qc][qd][qe][pf][nf][ng][nc][mc][mh][kg][kf][je][jd][jc][hc][dc][pq][pp][op][nq][nr][lr][jq][hq]AB[kc][lc][kd][md][nd][pd][lf][mf][jf][os][or][oq][np][mp][kp]SZ[19]C[第13题：黑先
+　　　　　　　　基本图
+【审题】想要吃掉右上方两个白子是办不到
+的。应该从如何最大限度地对它进行威胁这
+个角度去考虑。
+〖提示〗请先来解答参考图中的题目（黑先），
+或许你能从中得到一点启发。（下方为参考图）]
+
+(;B[oc];W[ob];B[pb];W[pc];B[nb];W[od];B[mb];W[kb]LB[na:a]C[图一：黑1、3为常见治孤手段。但在本题情况下失败。图中黑3如在5位打，白7、黑3、白a之后黑也无法继续。])
+(;B[ob];W[oc];B[pc];W[pb];B[qb];W[od];B[pa];W[mb];B[rb];W[rc];B[na];W[nb];B[oe]
+;W[pe];B[pb];W[lb];B[kb];W[ne];B[la];W[of]LB[ra:a]C[图二：黑1飞，白4空断妙手！黑棋被杀。过程中黑9如在10位扳，白a、黑9，白14可利用“盘角曲四”杀黑。又图中白10要紧！如改在14位打，黑走a位可净活。])
+(;B[mb];W[nb];B[ma];W[kb];B[ob];W[oc];B[pc];W[pb];B[od];W[oa];B[na]C[图三：黑1、3巧手，正着！])
+(;B[mb];W[nb];B[ma];W[pc];B[jb];W[ka];B[kb];W[na];B[ke];W[lb];B[ja];W[la];B[ic]LB[ib:a][hb:b]C[图四：黑3立时，白4补是正应。白6是最强抵抗！如改在a位挡，黑6虎即活。图中黑9做眼只此一
+手。黑13挖正确。如改在a位长，被白b位挡，即无法做活。]
+
+(;W[hd];B[hb];W[gb];B[ib];W[ha];B[id];W[ie];B[he];W[if];B[gc];W[gd];B[fc]C[图五：白14只能退，但黑15、17好手，至黑25，白棋上下不能兼顾而失败。])
+(;W[hd];B[hb];W[ib];B[gb];W[id];B[ha]C[图六：白16扑是最后抵抗。但黑棋17、19后，白棋无法继续杀黑。])
+(;W[ib];B[id];W[ie];B[hd];W[gb];B[gc];W[hb];B[gd];W[if];B[fb];W[eb];B[fc];W[fa]
+;B[ga];W[ha];B[ia]C[图七：这是白14兜打的变化。黑8粘好手，白棋因征子不利而告失败。
+
+
+结论：黑先活。图四、六的次序是正解。图五、七是变化。])))

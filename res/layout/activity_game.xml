@@ -9,7 +9,18 @@
     tools:context=".activity.MainActivity" >
 
     <com.github.mccxj.igo.view.GameView
+        android:id="@+id/game"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:background="#F6B57F" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/game"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="106dp"
+        android:text="001" />
+
 </RelativeLayout>
