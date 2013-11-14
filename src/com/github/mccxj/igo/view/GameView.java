@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 
 import com.github.mccxj.go.GoGame;
 import com.github.mccxj.go.sgf.SGFGame;
@@ -40,6 +42,14 @@ public class GameView extends View {
 
     public GameView(Context context) {
         super(context);
+        goGame = new GoGame();
+        paint.setAntiAlias(true);
+        gd = new GestureDetector(context, new GameGestureListener());
+        sgd = new ScaleGestureDetector(context, new GameScaleGestureListener());
+    }
+
+    public GameView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         goGame = new GoGame();
         paint.setAntiAlias(true);
         gd = new GestureDetector(context, new GameGestureListener());
@@ -99,10 +109,12 @@ public class GameView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int pointCount = event.getPointerCount();
-        if (pointCount == 1)
-            return gd.onTouchEvent(event);
-        else
-            return sgd.onTouchEvent(event);
+        return sgd.onTouchEvent(event);
+//        if (pointCount == 1) {
+//            return gd.onTouchEvent(event);
+//        } else {
+//            
+//        }
     }
 
     // if (MotionEvent.ACTION_UP == event.getAction()) {
@@ -130,22 +142,65 @@ public class GameView extends View {
     private class GameGestureListener extends GestureDetector.SimpleOnGestureListener {}
 
     private class GameScaleGestureListener implements OnScaleGestureListener {
+        private float beforeFactor;
+        private float mPivotX;
+        private float mPivotY;
+        private View mVSouce;
+        private boolean isFillAfter;
+
+        public GameScaleGestureListener() {
+            mVSouce = GameView.this;
+        }
+
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            // TODO Auto-generated method stub
+            final float factor = detector.getScaleFactor();
+            Animation animation = new ScaleAnimation(beforeFactor, factor, beforeFactor, factor, mPivotX, mPivotY);
+            animation.setFillAfter(true);
+            mVSouce.startAnimation(animation);
+            beforeFactor = factor;
             return false;
         }
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            // TODO Auto-generated method stub
-            return false;
+            if (checkIsNull()) {
+                return false;
+            }
+            beforeFactor = 1f;
+            mPivotX = detector.getFocusX() - mVSouce.getLeft();
+            mPivotY = mVSouce.getTop() + (mVSouce.getHeight() >> 1);
+            return true;
         }
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
-            // TODO Auto-generated method stub
+            if (checkIsNull()) {
+                return;
+            }
+            final float factor = detector.getScaleFactor();
+            final int nWidth = (int) (mVSouce.getWidth() * factor);
+            final int nHeight = (int) mVSouce.getHeight();
+            final int nLeft = (int) (mVSouce.getLeft() - ((nWidth - mVSouce.getWidth()) * (mPivotX / mVSouce.getWidth())));
+            final int nTop = (int) mVSouce.getTop();
+            if (isFillAfter) {
+                mVSouce.layout(nLeft, nTop, nLeft + nWidth, nTop + nHeight);
+            }
+            // MUST BE CLEAR ANIMATION. OTHERWISE WILL BE FLICKER
+            mVSouce.clearAnimation();
+        }
 
+        public boolean checkIsNull() {
+            return mVSouce == null ? true : false;
+        }
+
+        /**
+         * if parameter is true that keeping same scale when next scaling.
+         * 
+         * @param isFill
+         */
+        public void setFillAfter(boolean isFill) {
+            isFillAfter = isFill;
         }
     }
 }
