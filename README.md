@@ -5,6 +5,7 @@ Go (Chinese: 圍棋 wéiqí, Japanese: 囲碁 igo,[nb 2] Korean: 바둑 baduk, V
 
 TODO
 
+* 优化死活题的缩放功能
 * 增加死活题棋书展示及选择
 * 增加死活题棋书在线更新
 * 优化做题流程判断
