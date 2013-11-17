@@ -7,63 +7,75 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.ScaleGestureDetector.OnScaleGestureListener;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import com.github.mccxj.go.GoGame;
 import com.github.mccxj.go.sgf.SGFGame;
 
-public class GameView extends View {
+public class GameView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private Paint paint = new Paint();
     public GoGame goGame;
-    private int iX = 20;
-    private int iY = 20;
-    private int s = -1;
+    private float oX = -1f;// 左上角默认的x坐标
+    private float oY = -1f;// 左上角默认的y坐标
+    private int oS = -1;// 棋子默认的大小
+    private float mX = -1;// 右下角默认的x坐标
+    private float mY = -1;// 右下角默认的y坐标
+    private float iX = 20f;
+    private float iY = 20f;
+    private int iS = -1;
     private int radius = 3;
 
     private GestureDetector gd;
     private ScaleGestureDetector sgd;
+    private SurfaceHolder holder;
 
     public GameView(Context context) {
         super(context);
 
+        holder = getHolder();
+        holder.addCallback(this);
+        this.setFocusable(true);
         goGame = new GoGame();
         paint.setAntiAlias(true);
         gd = new GestureDetector(context, new GameGestureListener());
         sgd = new ScaleGestureDetector(context, new GameScaleGestureListener());
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    protected void draw() {
+        Canvas canvas = holder.lockCanvas();
 
-        if (s == -1) {
-            s = getWidth() / 20;
-            iX = (getWidth() - 18 * s) / 2;
+        paint.setColor(Color.YELLOW);
+        canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
+        if (iS == -1) {
+            oS = iS = getWidth() / 20;
+            oX = iX = (getWidth() - (SIZE - 1) * iS) / 2;
+            oY = iY = iX;
+            mX = oX + (SIZE - 1) * oS;
+            mY = oY + (SIZE - 1) * oS;
+
+            iX = iX - 40;
+            iY = iY - 50;
+            iS = iS * 2;
         }
-
-        setBackgroundColor(Color.YELLOW);
         paint.setColor(Color.BLACK);
 
         canvas.translate(iX, iY);
-        for (int i = 0; i < 19; i++) {
-            canvas.drawLine(0, s * i, s * 18, s * i, paint);
-            canvas.drawLine(s * i, 0, s * i, s * 18, paint);
+        for (int i = 0; i < SIZE; i++) {
+            canvas.drawLine(0, iS * i, iS * (SIZE - 1), iS * i, paint);
+            canvas.drawLine(iS * i, 0, iS * i, iS * (SIZE - 1), paint);
         }
 
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(s * 3, s * 3, radius, paint);
-        canvas.drawCircle(s * 3, s * 15, radius, paint);
-        canvas.drawCircle(s * 15, s * 3, radius, paint);
-        canvas.drawCircle(s * 15, s * 15, radius, paint);
-        canvas.drawCircle(s * 9, s * 9, radius, paint);
+        canvas.drawCircle(iS * 3, iS * 3, radius, paint);
+        canvas.drawCircle(iS * 3, iS * 15, radius, paint);
+        canvas.drawCircle(iS * 15, iS * 3, radius, paint);
+        canvas.drawCircle(iS * 15, iS * 15, radius, paint);
+        canvas.drawCircle(iS * 9, iS * 9, radius, paint);
 
         int[][] stones = goGame.getStones();
         for (int i = 0; i < SIZE; i++) {
@@ -71,29 +83,33 @@ public class GameView extends View {
                 if (BLACK == stones[i][j]) {
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(Color.BLACK);
-                    canvas.drawCircle(s * i, s * j, s / 2, paint);
+                    canvas.drawCircle(iS * i, iS * j, iS / 2, paint);
                 } else if (WHITE == stones[i][j]) {
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(Color.WHITE);
-                    canvas.drawCircle(s * i, s * j, s / 2, paint);
+                    canvas.drawCircle(iS * i, iS * j, iS / 2, paint);
                     paint.setStyle(Paint.Style.STROKE);
                     paint.setColor(Color.BLACK);
-                    canvas.drawCircle(s * i, s * j, s / 2, paint);
+                    canvas.drawCircle(iS * i, iS * j, iS / 2, paint);
                 }
             }
         }
+        canvas.restore();
+        holder.unlockCanvasAndPost(canvas);
     }
 
     public void setSGF(SGFGame game) {
         goGame.setSGF(game);
         goGame.reset();
-        this.postInvalidate();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int pointCount = event.getPointerCount();
-        return gd.onTouchEvent(event);
+        if (pointCount == 1)
+            return gd.onTouchEvent(event);
+        else
+            return sgd.onTouchEvent(event);
     }
 
     // if (MotionEvent.ACTION_UP == event.getAction()) {
@@ -122,72 +138,69 @@ public class GameView extends View {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             iX -= distanceX;
+            // 往右边移动
+            if (distanceX <= 0) {
+                // 判断是否超出左边
+                if (iX >= oX)
+                    iX = oX;
+            } else {
+                float zX = iX + (SIZE - 1) * iS;
+                zX -= distanceX;
+                // 判断是否超出右边
+                if (zX <= mX)
+                    iX += mX - zX;
+            }
+
             iY -= distanceY;
-            Log.d("IGO", "distanceX: " + distanceX + ", distanceY: " + distanceY);
+            // 往下边移动
+            if (distanceY <= 0) {
+                // 判断是否超出上边
+                if (iY >= oY)
+                    iY = oY;
+            } else {
+                float zY = iY + (SIZE - 1) * iS;
+                zY -= distanceX;
+                // 判断是否超出下边
+                if (zY <= mY)
+                    iY += mY - zY;
+            }
             return true;
         }
     }
 
-    private class GameScaleGestureListener implements OnScaleGestureListener {
-        private float beforeFactor;
-        private float mPivotX;
-        private float mPivotY;
-        private View mVSouce;
-        private boolean isFillAfter;
-
-        public GameScaleGestureListener() {
-            mVSouce = GameView.this;
-        }
-
+    private class GameScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             final float factor = detector.getScaleFactor();
-            Animation animation = new ScaleAnimation(beforeFactor, factor, beforeFactor, factor, mPivotX, mPivotY);
-            animation.setFillAfter(true);
-            mVSouce.startAnimation(animation);
-            beforeFactor = factor;
-            return false;
-        }
-
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            if (checkIsNull()) {
-                return false;
-            }
-            beforeFactor = 1f;
-            mPivotX = detector.getFocusX() - mVSouce.getLeft();
-            mPivotY = mVSouce.getTop() + (mVSouce.getHeight() >> 1);
+            Log.d("IGO", "factor: " + factor);
+            // s *= factor;
             return true;
         }
+    }
 
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            if (checkIsNull()) {
-                return;
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        new Thread(this).start();
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {}
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(50L);
             }
-            final float factor = detector.getScaleFactor();
-            final int nWidth = (int) (mVSouce.getWidth() * factor);
-            final int nHeight = (int) mVSouce.getHeight();
-            final int nLeft = (int) (mVSouce.getLeft() - ((nWidth - mVSouce.getWidth()) * (mPivotX / mVSouce.getWidth())));
-            final int nTop = (int) mVSouce.getTop();
-            if (isFillAfter) {
-                mVSouce.layout(nLeft, nTop, nLeft + nWidth, nTop + nHeight);
+            catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            // MUST BE CLEAR ANIMATION. OTHERWISE WILL BE FLICKER
-            mVSouce.clearAnimation();
-        }
-
-        public boolean checkIsNull() {
-            return mVSouce == null ? true : false;
-        }
-
-        /**
-         * if parameter is true that keeping same scale when next scaling.
-         * 
-         * @param isFill
-         */
-        public void setFillAfter(boolean isFill) {
-            isFillAfter = isFill;
+            synchronized (holder) {
+                draw();
+            }
         }
     }
 }
