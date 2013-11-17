@@ -1,13 +1,14 @@
 package com.github.mccxj.igo.view;
 
-import static com.github.mccxj.go.GameConstants.*;
+import static com.github.mccxj.go.GameConstants.BLACK;
+import static com.github.mccxj.go.GameConstants.SIZE;
+import static com.github.mccxj.go.GameConstants.WHITE;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -24,32 +25,15 @@ public class GameView extends View {
     public GoGame goGame;
     private int iX = 20;
     private int iY = 20;
-    private int s = 20;
+    private int s = -1;
     private int radius = 3;
 
-    private static final int NONE = 0;
-    private static final int DRAG = 1;
-    private static final int ZOOM = 2;
-    private int mode = NONE;
-    private Matrix tmpMatrix = new Matrix();;
-    private Matrix savedMatrix = new Matrix();
-    private PointF startPoint = new PointF();
-    private PointF endPoint = new PointF();
-    private PointF midPoint = new PointF();
-    private float oldDistance;
     private GestureDetector gd;
     private ScaleGestureDetector sgd;
 
     public GameView(Context context) {
         super(context);
-        goGame = new GoGame();
-        paint.setAntiAlias(true);
-        gd = new GestureDetector(context, new GameGestureListener());
-        sgd = new ScaleGestureDetector(context, new GameScaleGestureListener());
-    }
 
-    public GameView(Context context, AttributeSet attrs) {
-        super(context, attrs);
         goGame = new GoGame();
         paint.setAntiAlias(true);
         gd = new GestureDetector(context, new GameGestureListener());
@@ -59,10 +43,15 @@ public class GameView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        if (s == -1) {
+            s = getWidth() / 20;
+            iX = (getWidth() - 18 * s) / 2;
+        }
+
+        setBackgroundColor(Color.YELLOW);
         paint.setColor(Color.BLACK);
 
-        s = getWidth() / 20;
-        iX = (getWidth() - 18 * s) / 2;
         canvas.translate(iX, iY);
         for (int i = 0; i < 19; i++) {
             canvas.drawLine(0, s * i, s * 18, s * i, paint);
@@ -95,11 +84,6 @@ public class GameView extends View {
         }
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
     public void setSGF(SGFGame game) {
         goGame.setSGF(game);
         goGame.reset();
@@ -109,12 +93,7 @@ public class GameView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int pointCount = event.getPointerCount();
-        return sgd.onTouchEvent(event);
-//        if (pointCount == 1) {
-//            return gd.onTouchEvent(event);
-//        } else {
-//            
-//        }
+        return gd.onTouchEvent(event);
     }
 
     // if (MotionEvent.ACTION_UP == event.getAction()) {
@@ -139,7 +118,15 @@ public class GameView extends View {
     // return true;
     // }
 
-    private class GameGestureListener extends GestureDetector.SimpleOnGestureListener {}
+    private class GameGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            iX -= distanceX;
+            iY -= distanceY;
+            Log.d("IGO", "distanceX: " + distanceX + ", distanceY: " + distanceY);
+            return true;
+        }
+    }
 
     private class GameScaleGestureListener implements OnScaleGestureListener {
         private float beforeFactor;

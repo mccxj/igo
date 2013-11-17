@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -20,27 +21,34 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final View v = View.inflate(this, R.layout.activity_game, null);
-        gv = (GameView) v.findViewById(R.id.game);
+        //final View v = View.inflate(this, R.layout.activity_game, null);
+        //gv = (GameView) v.findViewById(R.id.game);
+        gv = new GameView(this);
+        setContentView(gv);
 
         loadSGF(1);
 
-        Button b1 = (Button) v.findViewById(R.id.button1);
-        b1.setOnClickListener(new OnClickListener() {
-            int idx = 1;
+//        Button b1 = (Button) v.findViewById(R.id.button1);
+//        b1.setOnClickListener(new OnClickListener() {
+//            int idx = 1;
+//
+//            @Override
+//            public void onClick(View v) {
+//                idx++;
+//                if (idx > 8)
+//                    idx = 1;
+//
+//                loadSGF(idx);
+//
+//            }
+//        });
 
-            @Override
-            public void onClick(View v) {
-                idx++;
-                if (idx > 8)
-                    idx = 1;
-
-                loadSGF(idx);
-
-            }
-        });
-
-        setContentView(v);
+        //setContentView(v);
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return gv.onTouchEvent(event);
     }
 
     private void loadSGF(int idx) {
