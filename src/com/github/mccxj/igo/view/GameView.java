@@ -18,11 +18,13 @@ import com.github.mccxj.go.GoGame;
 import com.github.mccxj.go.sgf.SGFGame;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+    private static final int MAX_RATE = 2;// 最大的放大倍数
     private Paint paint = new Paint();
     public GoGame goGame;
     private float oX = 0f;// 左上角默认的x坐标
     private float oY = 0f;// 左上角默认的y坐标
     private int oS = -1;// 棋子默认的大小
+    private int mS = -1;// 棋子最大的大小
     private float mX = -1;// 右下角默认的x坐标
     private float mY = -1;// 右下角默认的y坐标
     private float iX = 20f;
@@ -52,9 +54,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
         paint.setColor(Color.YELLOW);
         int width = getWidth();
-        canvas.drawRect(0, 0, width, getHeight(), paint);
+        int height = getHeight();
+        canvas.drawRect(0, 0, width, height, paint);
         if (iS == -1) {
+            Log.d("IGO", "sceen size is :" + width + " * " + height);
             oS = iS = width / (SIZE + 1);
+            mS = oS * MAX_RATE;
             oX = iX = iS / 2;
             oY = iY = iS / 2;
             mX = width - iS / 2;
@@ -176,12 +181,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     }
 
     private class GameScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        private float rate = 1f;
+
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             final float factor = detector.getScaleFactor();
-            Log.d("IGO", "factor: " + factor);
-            // s *= factor;
+            rate *= factor;
+
+            // 限制一下变化的频率
+            if (rate > 1.1f || rate < 0.9f) {
+                float tmp = iS;
+                iS *= rate;
+                rate = 1f;
+                // 限制棋子的大小
+                if (iS > mS)
+                    iS = mS;
+                else if (iS < oS)
+                    iS = oS;
+                final float realrate = iS / tmp;
+                iX = detector.getFocusX() - (detector.getFocusX() - iX) * realrate;
+                iY = detector.getFocusY() - (detector.getFocusY() - iY) * realrate;
+            }
             return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            rate = 1f;
+            return super.onScaleBegin(detector);
         }
     }
 
@@ -203,7 +230,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     public void run() {
         while (isLoop) {
             try {
-                Thread.sleep(50L);
+                Thread.sleep(100L);
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
