@@ -185,10 +185,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            final float fx = detector.getFocusX();
-            final float fy = detector.getFocusY();
-            Log.d("IGO", "x: " + fx + ", y: " + fy);
-            
             final float factor = detector.getScaleFactor();
             rate *= factor;
 
@@ -205,6 +201,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
                 final float realrate = iS / tmp;
                 iX = detector.getFocusX() - (detector.getFocusX() - iX) * realrate;
                 iY = detector.getFocusY() - (detector.getFocusY() - iY) * realrate;
+                
+                // 只有缩小的时候才需要考虑
+                if(realrate <= 1.0f){
+                    // 判断左上角的位置是否越界
+                    if(iX > oX){
+                        iX = oX;
+                    }
+                    else {
+                        if(iX + SIZE* iS < mX){
+                            iX = mX - SIZE* iS;
+                        }
+                    }
+                    
+                    if(iY > oY){
+                        iY = oY;
+                    }
+                    else {
+                        if(iY + SIZE* iS < mY){
+                            iY = mY - SIZE* iS;
+                        }
+                    }
+                }
             }
             return true;
         }
