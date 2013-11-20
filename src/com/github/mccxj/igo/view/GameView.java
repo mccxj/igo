@@ -20,8 +20,8 @@ import com.github.mccxj.go.sgf.SGFGame;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private Paint paint = new Paint();
     public GoGame goGame;
-    private float oX = -1f;// 左上角默认的x坐标
-    private float oY = -1f;// 左上角默认的y坐标
+    private float oX = 0f;// 左上角默认的x坐标
+    private float oY = 0f;// 左上角默认的y坐标
     private int oS = -1;// 棋子默认的大小
     private float mX = -1;// 右下角默认的x坐标
     private float mY = -1;// 右下角默认的y坐标
@@ -29,6 +29,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private float iY = 20f;
     private int iS = -1;
     private int radius = 3;
+    private volatile boolean isLoop = true;
 
     private GestureDetector gd;
     private ScaleGestureDetector sgd;
@@ -50,13 +51,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         Canvas canvas = holder.lockCanvas();
 
         paint.setColor(Color.YELLOW);
-        canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
+        int width = getWidth();
+        canvas.drawRect(0, 0, width, getHeight(), paint);
         if (iS == -1) {
-            oS = iS = getWidth() / 20;
-            oX = iX = (getWidth() - (SIZE - 1) * iS) / 2;
-            oY = iY = iX;
-            mX = oX + (SIZE - 1) * oS;
-            mY = oY + (SIZE - 1) * oS;
+            oS = iS = width / (SIZE + 1);
+            oX = iX = iS / 2;
+            oY = iY = iS / 2;
+            mX = width - iS / 2;
+            mY = width - iS / 2;
 
             iX = iX - 40;
             iY = iY - 50;
@@ -64,7 +66,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
         }
         paint.setColor(Color.BLACK);
 
-        canvas.translate(iX, iY);
+        canvas.translate(iX + iS / 2, iY + iS / 2);
         for (int i = 0; i < SIZE; i++) {
             canvas.drawLine(0, iS * i, iS * (SIZE - 1), iS * i, paint);
             canvas.drawLine(iS * i, 0, iS * i, iS * (SIZE - 1), paint);
@@ -101,6 +103,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     public void setSGF(SGFGame game) {
         goGame.setSGF(game);
         goGame.reset();
+        // goGame.addStone(0, 0);
+        // goGame.addStone(0, 1);
+        // goGame.addStone(0, 18);
+        // goGame.addStone(18, 0);
+        // goGame.addStone(18, 18);
     }
 
     @Override
@@ -144,7 +151,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
                 if (iX >= oX)
                     iX = oX;
             } else {
-                float zX = iX + (SIZE - 1) * iS;
+                float zX = iX + SIZE * iS;
                 zX -= distanceX;
                 // 判断是否超出右边
                 if (zX <= mX)
@@ -158,8 +165,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
                 if (iY >= oY)
                     iY = oY;
             } else {
-                float zY = iY + (SIZE - 1) * iS;
-                zY -= distanceX;
+                float zY = iY + SIZE * iS;
+                zY -= distanceY;
                 // 判断是否超出下边
                 if (zY <= mY)
                     iY += mY - zY;
@@ -183,15 +190,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        isLoop = true;
         new Thread(this).start();
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {}
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        isLoop = false;
+    }
 
     @Override
     public void run() {
-        while (true) {
+        while (isLoop) {
             try {
                 Thread.sleep(50L);
             }
