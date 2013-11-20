@@ -185,6 +185,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            final float fx = detector.getFocusX();
+            final float fy = detector.getFocusY();
+            Log.d("IGO", "x: " + fx + ", y: " + fy);
+            
             final float factor = detector.getScaleFactor();
             rate *= factor;
 
