@@ -29,6 +29,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
     private float iY = 20f;
     private int iS = -1;
     private int radius = 3;
+    private volatile boolean isLoop = true;
 
     private GestureDetector gd;
     private ScaleGestureDetector sgd;
@@ -183,15 +184,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        isLoop = true;
         new Thread(this).start();
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {}
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        isLoop = false;
+    }
 
     @Override
     public void run() {
-        while (true) {
+        while (isLoop) {
             try {
                 Thread.sleep(50L);
             }
