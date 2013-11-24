@@ -51,6 +51,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
 
     protected void draw() {
         Canvas canvas = holder.lockCanvas();
+        // 避免退出当前视图的时候崩溃
+        if (canvas == null)
+            return;
 
         paint.setColor(Color.YELLOW);
         int width = getWidth();
@@ -201,25 +204,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, Run
                 final float realrate = iS / tmp;
                 iX = detector.getFocusX() - (detector.getFocusX() - iX) * realrate;
                 iY = detector.getFocusY() - (detector.getFocusY() - iY) * realrate;
-                
+
                 // 只有缩小的时候才需要考虑
-                if(realrate <= 1.0f){
+                if (realrate <= 1.0f) {
                     // 判断左上角的位置是否越界
-                    if(iX > oX){
+                    if (iX > oX) {
                         iX = oX;
-                    }
-                    else {
-                        if(iX + SIZE* iS < mX){
-                            iX = mX - SIZE* iS;
+                    } else {
+                        if (iX + SIZE * iS < mX) {
+                            iX = mX - SIZE * iS;
                         }
                     }
-                    
-                    if(iY > oY){
+
+                    if (iY > oY) {
                         iY = oY;
-                    }
-                    else {
-                        if(iY + SIZE* iS < mY){
-                            iY = mY - SIZE* iS;
+                    } else {
+                        if (iY + SIZE * iS < mY) {
+                            iY = mY - SIZE * iS;
                         }
                     }
                 }
